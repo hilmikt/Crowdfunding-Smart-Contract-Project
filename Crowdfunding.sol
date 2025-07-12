@@ -14,7 +14,7 @@ contract Crowdfunding {
     // @dev Target amount to raise (in wei)
     uint public fundingGoal;
 
-    // @dev Timestamp when campaign ends;
+    // @dev Timestamp when campaign ends
     uint public deadline;
 
     // @dev Total amount of ETH raised so far
@@ -44,13 +44,13 @@ contract Crowdfunding {
         _;
     }
 
-    ///@dev Modifier to check  if campaign still active
+    ///@dev Modifier to check if campaign still active
     modifier beforeDeadline() {
         require(block.timestamp < deadline, "Campaign has ended");
         _;
     }
 
-    ///@dev Modifier to check  if campaign is over
+    ///@dev Modifier to check if campaign is over
     modifier afterDeadline() {
         require(block.timestamp >= deadline, "Campaign is still active");
         _;
@@ -85,6 +85,38 @@ contract Crowdfunding {
         payable(owner).transfer(amount);
 
         emit Withdrawn(owner, amount);
+    }
+
+    // @dev Event fired when a contributor claims a refund
+    event Refunded(address indexed contributor, uint amount);
+
+    /// @notice Allows contributors to claim refund if goal not reached
+    /// @dev Refunds only allowed after deadline and only once per address
+    function claimRefund() public afterDeadline {
+        require(totalRaised < fundingGoal, "Funding goal was met");
+        uint contributedAmount = contributions[msg.sender];
+        require(contributedAmount > 0, "No contribution to refund");
+
+        contributions[msg.sender] = 0; // Prevent re-entrancy
+        payable(msg.sender).transfer(contributedAmount);
+
+        emit Refunded(msg.sender, contributedAmount);
+    }
+
+    /// @notice Returns contract's current ETH balance
+    /// @return balance Amount of ETH (in wei) held by this contract
+    function getContractBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+
+    /// @notice Returns seconds remaining until campaign deadline
+    /// #return timeLeft Seconds left; returns 0 if deadline has passed
+    function getTimeLeft() public view returns (uint) {
+        if (block.timestamp >= deadline) {
+            return 0;
+        } else {
+            return deadline - block.timestamp;
+        }
     }
 
 }
