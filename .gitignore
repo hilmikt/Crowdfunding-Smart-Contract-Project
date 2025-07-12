@@ -1,0 +1,49 @@
+# ========== Common Ethereum/Blockchain ==========
+*.abi
+*.bin
+*.db
+*.json
+*.tsbuildinfo
+
+# ========== Hardhat ==========
+artifacts/
+cache/
+coverage/
+typechain/
+coverage.json
+hardhat-report.html
+
+# ========== Truffle ==========
+build/
+
+# ========== Foundry ==========
+out/
+lib/
+forge-cache/
+broadcast/
+
+# ========== Node.js ==========
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========== Environment Files ==========
+.env
+.env.local
+.env.*.local
+
+# ========== OS-Specific ==========
+.DS_Store
+Thumbs.db
+
+# ========== VSCode ==========
+.vscode/
+
+# ========== Logs ==========
+*.log
+logs/
+
+# ========== Remix ==========
+*.zip
+remix-workspace/
