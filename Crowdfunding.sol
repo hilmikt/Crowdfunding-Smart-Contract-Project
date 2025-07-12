@@ -44,10 +44,30 @@ contract Crowdfunding {
         _;
     }
 
+    ///@dev Modifier to check  if campaign still active
+    modifier beforeDeadline() {
+        require(block.timestamp < deadline, "Campaign has ended");
+        _;
+    }
+
     ///@dev Modifier to check  if campaign is over
     modifier afterDeadline() {
         require(block.timestamp >= deadline, "Campaign is still active");
         _;
+    }
+
+    // @dev Event fired when a user contributes ETH
+    event Contributed(address indexed contributor, uint amount);
+
+    /// @notice Contribute ETH to the crowdfunding campaign
+    /// @dev Increments total raised and tracks per-address contribution
+    function contribute() public payable beforeDeadline {
+        require(msg.value > 0, "Contribution must be greater than 0");
+
+        contributions[msg.sender] += msg.value;
+        totalRaised += msg.value;
+
+        emit Contributed(msg.sender, msg.value);
     }
 
 }
