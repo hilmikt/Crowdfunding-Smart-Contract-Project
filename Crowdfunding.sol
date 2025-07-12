@@ -70,4 +70,21 @@ contract Crowdfunding {
         emit Contributed(msg.sender, msg.value);
     }
 
+    // @dev Event fired when the owner withdraws raised funds
+    event Withdrawn(address indexed owner, uint amount);
+
+    /// @notice Allows owner to withdraw raised funds if goal is met
+    /// @dev Only callable once, after deadline and if goal is reached
+    function withdrawFunds() public onlyOwner afterDeadline {
+        require(!fundsWithdrawn, "Funds already withdrawn");
+        require(totalRaised >= fundingGoal, "Funding goal not reached");
+
+        fundsWithdrawn = true;
+
+        uint amount = address(this).balance;
+        payable(owner).transfer(amount);
+
+        emit Withdrawn(owner, amount);
+    }
+
 }
